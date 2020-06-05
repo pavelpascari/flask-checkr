@@ -1,64 +1,77 @@
+import logging
 import json
 import functools
 
-from jsonschema import validate, ValidationError, SchemaError, draft7_format_checker
+from jsonschema import (
+    validate, ValidationError, SchemaError, draft7_format_checker,
+    Draft7Validator
+)
 
 from flask import current_app, request
 
 from .errors import *
 
+logger = logging.getLogger(__name__)
+
 
 class Schema(object):
     def __init__(self, app=None, cache=False):
         self.app = None
-        self._schemas = {}
+        self._validators = {}
         self._should_cache = cache
         if app is not None:
             self.app = app
             self.init_app(app)
 
     def init_app(self, app):
+        # todo: read application configuration
         self.app = app or current_app
 
-    def _get_schema(self, key, schema_loader):
+    def _get_validator(self, key, loader):
         if self._should_cache:
-            saved_schema = self._schemas.get(key)
-            if saved_schema is not None:
-                return saved_schema
+            v = self._validators.get(key)
+            if v is not None:
+                return v
 
-        if not callable(schema_loader):
+        if not callable(loader):
             raise ValueError("schema_loader has to be callable")
-        s = schema_loader()
-        self._schemas[key] = s
-        return s
+        s = loader()
+        v = Draft7Validator(schema=s, format_checker=draft7_format_checker)
+        self._validators[key] = v
+        return v
 
-    def validate(self, instance, schema):
+    @staticmethod
+    def _validate(instance, schema):
         validate(instance, schema, format_checker=draft7_format_checker)
 
     def validate_response(self, instance, route_rule, method, loader):
         key = "response:%s:%s" % (method, route_rule)
-        schema = self._get_schema(key, loader)
+        validator = self._get_validator(key, loader)
         try:
-            self.validate(instance, schema)
+            validator.validate(instance)
         except ValidationError as e:
             self._re_raise(e, ResponseValidationError)
         except SchemaError as serr:
-            self.app.logger.exception(serr)
+            logger.exception(serr)
             self._re_raise(serr, FlaskSchemaValidationError)
 
     def validate_request(self, instance, route_rule, method, loader):
         key = "request:%s:%s" % (method, route_rule)
-        schema = self._get_schema(key, loader)
+        validator = self._get_validator(key, loader)
         try:
-            self.validate(instance, schema)
+            # todo: implement the lazy lookup of errors
+            # to get all the errors at once so it is possible
+            # to return them to the error handler
+            validator.validate(instance)
         except ValidationError as e:
             self._re_raise(e, RequestValidationError)
         except SchemaError as serr:
-            self.app.logger.exception(serr)
+            logger.exception(serr)
             self._re_raise(serr, FlaskSchemaValidationError)
 
-    def load_schema(self, path):
-        self.app.logger.info("loading schema for: %s", path)
+    @staticmethod
+    def load_schema(path):
+        logger.info("loading schema for: %s", path)
         _schema = None
         with open(path) as spec:
             _schema = json.loads(spec.read())
@@ -69,7 +82,7 @@ class Schema(object):
         # more useful error details that can be configured.
         invalid = []
         required = []
-        if exc.validator == 'type':
+        if exc.validator in ['type', 'format']:
             invalid = list(exc.path)
         elif exc.validator == 'required':
             required = list(exc.validator_value)
