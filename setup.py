@@ -1,17 +1,17 @@
 from setuptools import setup, find_packages
-from flask_schema import __version__
+from flask_checkr import __version__
 
 with open('README.rst') as file:
     long_description = file.read()
 
 setup(
-    name='flask_schema',
+    name='flask_checkr',
     version=__version__,
     license='MIT',
     author='Pavel Pascari',
     author_email='pascaripavel@gmail.com',
-    url='https://github.com/pavelpascari/flask-schema',
-    download_url="https://github.com/pavelpascari/flask-schema/archive/v0.0.1.tar.gz",
+    url='https://github.com/pavelpascari/flask-checkr',
+    download_url="https://github.com/pavelpascari/flask-checkr/archive/v0.0.1.tar.gz",
     description='Easily validate Flask requests with JSONSchema.',
     long_description=long_description,
     platforms=['OS Independent'],
