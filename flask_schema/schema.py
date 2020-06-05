@@ -7,7 +7,7 @@ from jsonschema import (
     Draft7Validator
 )
 
-from flask import current_app, request
+from flask import current_app, request, Response
 
 from .errors import *
 
@@ -113,7 +113,15 @@ class Schema(object):
             @functools.wraps(func)
             def wrapper(*args, **kwargs):
                 # execute handler
-                payload = func(*args, **kwargs)
+                resp = func(*args, **kwargs)
+                payload = {}
+                if isinstance(resp, Response):
+                    payload = resp.json
+                elif isinstance(resp, tuple):
+                    payload = resp[0]
+                else:
+                    # assume it's a dict
+                    payload = resp
                 self.validate_response(payload, request.url_rule, request.method, loader)
                 # if valid
                 return payload
