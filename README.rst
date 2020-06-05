@@ -2,12 +2,8 @@
 .. _Flask: http://flask.pocoo.org/
 
 =============
-Flask-Schema
+Flask-Checkr
 =============
 
 A tool that allows for quick and extensible JSON Schema validation for a Flask_ application.
 
-
-TODOs:
-
-- Update the readme
