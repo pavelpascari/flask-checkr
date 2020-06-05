@@ -11,7 +11,7 @@ setup(
     author='Pavel Pascari',
     author_email='pascaripavel@gmail.com',
     url='https://github.com/pavelpascari/flask-checkr',
-    download_url="https://github.com/pavelpascari/flask-checkr/archive/v0.0.1.tar.gz",
+    download_url="https://github.com/pavelpascari/flask-checkr/archive/v%s.tar.gz" % __version__,
     description='Easily validate Flask requests with JSONSchema.',
     long_description=long_description,
     platforms=['OS Independent'],
