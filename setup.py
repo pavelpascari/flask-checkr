@@ -11,6 +11,7 @@ setup(
     author='Pavel Pascari',
     author_email='pascaripavel@gmail.com',
     url='https://github.com/pavelpascari/flask-schema',
+    download_url="https://github.com/pavelpascari/flask-schema/archive/v0.0.1.tar.gz",
     description='Easily validate Flask requests with JSONSchema.',
     long_description=long_description,
     platforms=['OS Independent'],
