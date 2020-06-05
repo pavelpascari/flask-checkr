@@ -14,7 +14,10 @@ setup(
     description='Easily validate Flask requests with JSONSchema.',
     long_description=long_description,
     platforms=['OS Independent'],
-    install_requires=['Flask'],
+    install_requires=[
+        'Flask',
+        'jsonschema',
+    ],
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

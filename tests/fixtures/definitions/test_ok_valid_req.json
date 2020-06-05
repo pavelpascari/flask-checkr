@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "description": "Request object",
+  "required": [
+    "destination",
+    "message"
+  ],
+  "properties": {
+    "destination": {
+      "type": "array",
+      "description": "An error code identifier. Use `code` for mapping error messages.",
+      "items": {
+        "type": "string",
+        "format": "email"
+      },
+      "minItems": 1
+    },
+    "message": {
+      "type": "string",
+      "description": "The message to be delivered"
+    }
+  }
+}

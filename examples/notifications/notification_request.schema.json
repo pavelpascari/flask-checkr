@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "description": "Notification request object",
+  "required": [
+    "destination",
+    "message"
+  ],
+  "properties": {
+    "destination": {
+      "type": "array",
+      "description": "An array of receivers of the notification. Has to contain at least one email.",
+      "items": {
+        "type": "string",
+        "format": "email"
+      },
+      "minItems": 1
+    },
+    "subject": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string",
+      "description": "The message to be delivered"
+    }
+  }
+}

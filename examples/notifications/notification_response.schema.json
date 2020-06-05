@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "description": "Response object",
+  "required": ["id", "state"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "A unique identifier for the notification request.",
+      "format": "uuid"
+    },
+    "state": {
+      "type": "string",
+      "description": "The state of the notification processing"
+    },
+    "message": {
+      "type": "string",
+      "description": "A developer friendly message that contains more context about the state."
+    }
+  }
+}
