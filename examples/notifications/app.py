@@ -1,7 +1,7 @@
 import json
 
 from flask import Flask, Response
-from flask_schema import Schema, RequestValidationError, ResponseValidationError
+from flask_checkr import Schema, RequestValidationError, ResponseValidationError
 
 app = Flask(__name__)
 
