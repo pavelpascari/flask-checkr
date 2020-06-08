@@ -2,6 +2,8 @@ import logging
 import json
 import functools
 
+from http import HTTPStatus
+
 from jsonschema import (
     validate, ValidationError, SchemaError, draft7_format_checker,
     Draft7Validator
@@ -114,17 +116,22 @@ class Schema(object):
             def wrapper(*args, **kwargs):
                 # execute handler
                 resp = func(*args, **kwargs)
+
+                # default values
                 payload = {}
+                status = HTTPStatus.OK
+
                 if isinstance(resp, Response):
                     payload = resp.json
+                    status = resp.status
                 elif isinstance(resp, tuple):
-                    payload = resp[0]
+                    payload, status = resp
                 else:
-                    # assume it's a dict
+                    # assume it's a json compatible structure
                     payload = resp
+                # validate_response will raise a FlaskSchemaValidationError instance if not valid
                 self.validate_response(payload, request.url_rule, request.method, loader)
-                # if valid
-                return payload
+                return payload, status
 
             return wrapper
 
